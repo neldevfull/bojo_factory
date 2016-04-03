@@ -37,9 +37,31 @@ class OrdersController < ApplicationController
 
         go_production(stock, orders)
 
+        take_stock(stock)
+
         respond_to do |format|
             format.html { redirect_to new_orders_path }
         end
+    end
+
+    def take_stock(stock)
+        orders     = Order.where(is_factured: 1)
+        total_foam = 0
+
+        orders.each do |order|
+            if order.color == "VERMELHO"
+                stock.red_fabric -= order.fabric
+                total_foam       += order.foam
+            elsif order.color == "BRANCO"
+                stock.white_fabric -= order.fabric
+                total_foam         += order.foam
+            elsif order.color == "PRETO"
+                stock.black_fabric -= order.fabric
+                total_foam         += order.foam
+            end
+        end
+        stock.foam -= total_foam
+        stock.save()
     end
 
     def go_production(stock, orders)
@@ -48,7 +70,7 @@ class OrdersController < ApplicationController
             ["BRANCO", stock.white_fabric], ["PRETO", stock.black_fabric]]
 
         values.each do |value|
-            products = orders.where(color: value[0], is_factured: nil)
+            products = orders.where(color: value[0], is_factured: 2)
 
             num_order = check_product(value[1], products)
 
@@ -64,7 +86,7 @@ class OrdersController < ApplicationController
     end
 
     def set_production()
-        orders = Order.where(is_factured: nil)
+        orders = Order.where(is_factured: 2)
 
         orders.each do |order|
             order.is_factured = 1
@@ -75,7 +97,7 @@ class OrdersController < ApplicationController
     def set_not_production()
         result = Order.where(is_factured: 0)
         if result.count > 0
-            orders = Order.where(num_order: result[0].num_order, is_factured: nil)
+            orders = Order.where(num_order: result[0].num_order, is_factured: 2)
 
             orders.each do |order|
                 order.is_factured = 0

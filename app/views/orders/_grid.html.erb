@@ -22,17 +22,19 @@
         </thead>
         <tbody>
             <% for order in @orders do %>
-                <tr>
-                    <td><%= order.customer %></td>
-                    <td class="num_order"><%= order.num_order %></td>
-                    <td><%= order.color %></td>
-                    <td><%= order.amount %></td>
-                    <td><%= order.loss %></td>
-                    <td><%= order.plates %></td>
-                    <td><%= order.fabric %></td>
-                    <td><%= order.foam %></td>
-                    <td><%= order.total %></td>
-                </tr>
+                <% if order.is_factured != 1 %>
+                    <tr>
+                        <td><%= order.customer %></td>
+                        <td class="num_order"><%= order.num_order %></td>
+                        <td><%= order.color %></td>
+                        <td><%= order.amount %></td>
+                        <td><%= order.loss %></td>
+                        <td><%= order.plates %></td>
+                        <td><%= order.fabric %></td>
+                        <td><%= order.foam %></td>
+                        <td><%= order.total %></td>
+                    </tr>
+                <% end %>
             <% end %>
        </tbody>
     </table>

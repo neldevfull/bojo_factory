@@ -10,7 +10,7 @@ class CreateOrders < ActiveRecord::Migration
       t.float :fabric
       t.float :foam
       t.integer :total
-      t.integer :is_factured
+      t.integer :is_factured, default: 2 # 1 = production, 0 = not procution 3 = wait
 
       t.timestamps null: false
     end

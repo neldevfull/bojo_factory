@@ -26,9 +26,9 @@ ActiveRecord::Schema.define(version: 2) do
     t.float    "fabric"
     t.float    "foam"
     t.integer  "total"
-    t.integer  "is_factured"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.integer  "is_factured", default: 2
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   create_table "stocks", force: :cascade do |t|
