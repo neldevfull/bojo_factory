@@ -1,0 +1,34 @@
+<%= form_for @order do |f| %>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h1>Cadastro de Pedidos</h1>
+        </div>
+        <div class="panel-body">
+            <div class="container-fluid" style="width: 50%; float:left">
+                <div class="row">
+                    <div style="padding: .5em 0;">
+                        <label>Pedido</label>
+                        <%= f.text_field :num_order, class: "form-control" %>
+                    </div>
+                    <div style="padding: .5em 0;">
+                        <label>Cliente</label>
+                        <%= f.text_field :customer, class: "form-control" %>
+                    </div>
+                    <div style="padding: .5em 0;">
+                        <label>Cor</label>
+                        <%= f.select :color, [['VERMELHO', 'VERMELHO'],
+                            ['BRANCO', 'BRANCO'], ['PRETO', 'PRETO']], {},
+                            class: 'form-control' %>
+                    </div>
+                    <div style="padding: .5em 0;">
+                        <label>Quantidade</label>
+                        <%= f.text_field :amount, class: "form-control" %>
+                    </div>
+                    <div style="padding: .5em 0;">
+                        <%= f.submit "Cadastrar", class: "btn btn-success new_order" %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>

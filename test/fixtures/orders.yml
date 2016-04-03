@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer: MyString
+  amount: 1
+  loss: 1
+  plates: 1
+  amount_fabric: 9.99
+  amount_foam: 9.99
+  total_bojos: 1
+
+two:
+  customer: MyString
+  amount: 1
+  loss: 1
+  plates: 1
+  amount_fabric: 9.99
+  amount_foam: 9.99
+  total_bojos: 1
