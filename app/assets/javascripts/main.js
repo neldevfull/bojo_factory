@@ -1,6 +1,20 @@
 $(function() {
     'use strict';
 
+    $("#autoCreate").on("click", function() {
+        $.ajax({
+            type: "POST",
+            url: "autocreate",
+            data: '',
+            success: function(result) {
+                console.log(result);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+
     $("#sendProduction").on("click", function() {
         var contentOrders = document.querySelectorAll(".num_order");
         var numOrders     = [];
@@ -16,7 +30,7 @@ $(function() {
             url: "sendproduction",
             data: 'orders='+numOrders,
             success: function(result) {
-                console.log(result);
+                window.location.href = "production"
             },
             error: function(error) {
                 console.log(error);

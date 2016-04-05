@@ -1,0 +1,40 @@
+<div class="container-fluid">
+    <div style="margin-bottom: 6em;">
+        <h1 style="float:left;">Pedidos voltar produção</h1>
+        <div style="float:right; margin-top: 2em;">
+          <%= link_to "Voltar", new_orders_path, class: "btn btn-default" %>
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Pedido</th>
+                <th>Cor Bojo</th>
+                <th>Quantidade de Pedido</th>
+                <th>Quantidade com perda</th>
+                <th>Quantidade de placas</th>
+                <th>Quantidade de tecido</th>
+                <th>Quantidade de espuma</th>
+                <th>Quantidade de bojos produzidos</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for order in @orders do %>
+                <% if order.is_factured == 1 %>
+                    <tr>
+                        <td><%= order.customer %></td>
+                        <td class="num_order"><%= order.num_order %></td>
+                        <td><%= order.color %></td>
+                        <td><%= order.amount %></td>
+                        <td><%= order.loss %></td>
+                        <td><%= order.plates %></td>
+                        <td><%= order.fabric %></td>
+                        <td><%= order.foam %></td>
+                        <td><%= order.total %></td>
+                    </tr>
+                <% end %>
+            <% end %>
+       </tbody>
+    </table>
+</div>

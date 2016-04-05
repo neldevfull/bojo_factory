@@ -1,5 +1,9 @@
 class OrdersController < ApplicationController
 
+    def index
+        @orders = Order.all()
+    end
+
     def new
         @order  = Order.new
         @orders = Order.all()
@@ -40,7 +44,7 @@ class OrdersController < ApplicationController
         take_stock(stock)
 
         respond_to do |format|
-            format.html { redirect_to new_orders_path }
+            format.html { redirect_to production_path }
         end
     end
 
@@ -70,15 +74,10 @@ class OrdersController < ApplicationController
             ["BRANCO", stock.white_fabric], ["PRETO", stock.black_fabric]]
 
         values.each do |value|
-            products = orders.where(color: value[0], is_factured: 2)
+            products = orders.where(color: value[0], is_factured: 2).to_a
+            products = check_product(value[1], products)
 
-            num_order = check_product(value[1], products)
-
-            if num_order == 0
-                check_go_production(value[1], products)
-            else
-                not_factured(orders, num_order)
-            end
+            check_go_production(value[1], products)
         end
 
         set_not_production()
@@ -110,41 +109,89 @@ class OrdersController < ApplicationController
     def check_product(fabric, products)
         products.each do |product|
             if product.fabric > fabric
-                return product.num_order
+                products.delete(product)
             end
         end
-        return 0
+        return products
     end
 
-    def check_go_production(fabric, orders)
-        unless orders.pluck("fabric").sum() <= fabric
-            orders = removing_lowest_order(orders)
-            check_go_production(fabric, orders)
+    def check_go_production(stock_fabric, products)
+        fabric = 0.0
+        products.each do |product|
+            fabric += product.fabric
+        end
+
+        unless stock_fabric > fabric
+            products = removing_lowest_order(products)
+            check_go_production(fabric, products)
         end
     end
 
-    def removing_lowest_order(orders)
-        num_order = 0
-        values    = []
-        order     = orders.pluck("num_order", "fabric")
+    def removing_lowest_order(products)
+        products_total = []
 
-        order.each do |o|
-            values.push(o[1])
+        products.each do |product|
+            prods = [Order.where(num_order:product.num_order).pluck("total").sum, product.num_order]
+            products_total.push(prods)
         end
 
-        num_order = order[values.index(values.min)][0]
-        results   = orders.where.not(num_order: num_order)
-        not_factured(orders, num_order)
+        num_order = products_total.min[1]
 
-        return results
+        products.each do |product|
+            if product.num_order == num_order
+                products.delete(product)
+            end
+        end
+
+        not_factured(num_order)
     end
 
-    def not_factured(orders, num_order)
-        results = orders.where(num_order: num_order)
+    def not_factured(num_order)
+        results = Order.where(num_order: num_order)
         results.each do |result|
             result.is_factured = 0
             result.save()
         end
+    end
+
+    def autocreate()
+        Stock.destroy_all
+
+        stock              = Stock.new
+        stock.input_output = 1
+        stock.red_fabric   = 40
+        stock.white_fabric = 60
+        stock.black_fabric = 50
+        stock.foam         = 600
+
+        stock.save()
+
+        Order.destroy_all
+
+        orders = [["1", "Allan Turing", "VERMELHO", 500],
+            ["1", "Allan Turing", "BRANCO", 300],
+            ["2", "Bill Gates", "VERMELHO", 200],
+            ["2", "Bill Gates", "BRANCO", 200],
+            ["2", "Bill Gates", "PRETO", 300],
+            ["3", "Steve Jobs", "PRETO", 400],
+            ["3", "Steve Jobs", "BRANCO", 650]]
+
+        orders.each do |o|
+            order            = Order.new
+            order.num_order  = o[0]
+            order.customer   = o[1]
+            order.color      = o[2]
+            order.amount     = o[3]
+            order.loss       = order.amount * 1.1
+            order.plates     = (order.loss.to_f / 8).ceil
+            order.fabric     = (order.plates * 0.4).round(2)
+            order.foam       = (order.plates * 1.2).round(2)
+            order.total      = order.plates * 8
+            order.created_at  = Time.now.getutc
+            order.updated_at = Time.now.getutc
+            order.save()
+        end
+
     end
 
     def check_foam(foam, orders)
