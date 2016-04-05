@@ -1,5 +1,9 @@
 class OrdersController < ApplicationController
 
+    def index
+        @orders = Order.all()
+    end
+
     def new
         @order  = Order.new
         @orders = Order.all()
@@ -40,7 +44,7 @@ class OrdersController < ApplicationController
         take_stock(stock)
 
         respond_to do |format|
-            format.html { redirect_to new_orders_path }
+            format.html { redirect_to production_path }
         end
     end
 
@@ -148,6 +152,46 @@ class OrdersController < ApplicationController
             result.is_factured = 0
             result.save()
         end
+    end
+
+    def autocreate()
+        Stock.destroy_all
+
+        stock              = Stock.new
+        stock.input_output = 1
+        stock.red_fabric   = 40
+        stock.white_fabric = 60
+        stock.black_fabric = 50
+        stock.foam         = 600
+
+        stock.save()
+
+        Order.destroy_all
+
+        orders = [["1", "Allan Turing", "VERMELHO", 500],
+            ["1", "Allan Turing", "BRANCO", 300],
+            ["2", "Bill Gates", "VERMELHO", 200],
+            ["2", "Bill Gates", "BRANCO", 200],
+            ["2", "Bill Gates", "PRETO", 300],
+            ["3", "Steve Jobs", "PRETO", 400],
+            ["3", "Steve Jobs", "BRANCO", 650]]
+
+        orders.each do |o|
+            order            = Order.new
+            order.num_order  = o[0]
+            order.customer   = o[1]
+            order.color      = o[2]
+            order.amount     = o[3]
+            order.loss       = order.amount * 1.1
+            order.plates     = (order.loss.to_f / 8).ceil
+            order.fabric     = (order.plates * 0.4).round(2)
+            order.foam       = (order.plates * 1.2).round(2)
+            order.total      = order.plates * 8
+            order.created_at  = Time.now.getutc
+            order.updated_at = Time.now.getutc
+            order.save()
+        end
+
     end
 
     def check_foam(foam, orders)
