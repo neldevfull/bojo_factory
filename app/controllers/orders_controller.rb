@@ -70,15 +70,10 @@ class OrdersController < ApplicationController
             ["BRANCO", stock.white_fabric], ["PRETO", stock.black_fabric]]
 
         values.each do |value|
-            products = orders.where(color: value[0], is_factured: 2)
+            products = orders.where(color: value[0], is_factured: 2).to_a
+            products = check_product(value[1], products)
 
-            num_order = check_product(value[1], products)
-
-            if num_order == 0
-                check_go_production(value[1], products)
-            else
-                not_factured(orders, num_order)
-            end
+            check_go_production(value[1], products)
         end
 
         set_not_production()
@@ -110,37 +105,45 @@ class OrdersController < ApplicationController
     def check_product(fabric, products)
         products.each do |product|
             if product.fabric > fabric
-                return product.num_order
+                products.delete(product)
             end
         end
-        return 0
+        return products
     end
 
-    def check_go_production(fabric, orders)
-        unless orders.pluck("fabric").sum() <= fabric
-            orders = removing_lowest_order(orders)
-            check_go_production(fabric, orders)
+    def check_go_production(stock_fabric, products)
+        fabric = 0.0
+        products.each do |product|
+            fabric += product.fabric
+        end
+
+        unless stock_fabric > fabric
+            products = removing_lowest_order(products)
+            check_go_production(fabric, products)
         end
     end
 
-    def removing_lowest_order(orders)
-        num_order = 0
-        values    = []
-        order     = orders.pluck("num_order", "fabric")
+    def removing_lowest_order(products)
+        products_total = []
 
-        order.each do |o|
-            values.push(o[1])
+        products.each do |product|
+            prods = [Order.where(num_order:product.num_order).pluck("total").sum, product.num_order]
+            products_total.push(prods)
         end
 
-        num_order = order[values.index(values.min)][0]
-        results   = orders.where.not(num_order: num_order)
-        not_factured(orders, num_order)
+        num_order = products_total.min[1]
 
-        return results
+        products.each do |product|
+            if product.num_order == num_order
+                products.delete(product)
+            end
+        end
+
+        not_factured(num_order)
     end
 
-    def not_factured(orders, num_order)
-        results = orders.where(num_order: num_order)
+    def not_factured(num_order)
+        results = Order.where(num_order: num_order)
         results.each do |result|
             result.is_factured = 0
             result.save()

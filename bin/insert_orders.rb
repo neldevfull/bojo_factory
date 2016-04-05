@@ -1,0 +1,12 @@
+order            = Order.new
+order.num_order  = "1"
+order.customer   = "Allan Turing"
+order.color      = "VERMELHO"
+order.amount     = 500
+order.loss       = order.amount * 1.1
+order.plates     = (order.loss.to_f / 8).ceil
+order.fabric     = (order.plates * 0.4).round(2)
+order.foam       = (order.plates * 1.2).round(2)
+order.total      = order.plates * 8
+order.create_at  = Time.now.getutc
+order.updated_at = Time.now.getutc
