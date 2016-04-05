@@ -1,7 +1,11 @@
+<button id="autoCreate" style="display: block;">Auto create</button>
 <%= form_for @order do |f| %>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h1>Cadastro de Pedidos</h1>
+            <div style="float:right; margin-top: -5em;">
+              <%= link_to "Produção", production_path, class: "btn btn-default" %>
+            </div>
         </div>
         <div class="panel-body">
             <div class="container-fluid" style="width: 50%; float:left">
