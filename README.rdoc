@@ -1,28 +1,13 @@
-== README
+# Projeto BojoFactory
+## O projeto contempla uma fábrica de bojo no qual deve calcular quais pedidos devem ir
+para produção de acordo com a quantidade total por pedidos em relação ao estoque
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Tecnologias
+* Ruby on Rails
+* PostgreSQL
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+# Como rodar o Projeto ?
+## Após instalar Ruby rode o comando `bundle install` para instalar as dependências,
+posteriormente rode o comando `rake db:create; rake db:migrate` para criar o banco dedados
+e fazer as migrações.
+rake doc:app</tt>.
